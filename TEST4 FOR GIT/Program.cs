@@ -13,6 +13,7 @@ namespace TEST4_FOR_GIT
     {
         const string createQuery = @"CREATE TABLE IF NOT EXISTS
                                 [UkrNet] (
+                                [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                                 [1] NVARCHAR (2048) NULL,
                                 [2] NVARCHAR (2048) NULL,
                                 [3] NVARCHAR (2048) NULL,
@@ -45,10 +46,10 @@ namespace TEST4_FOR_GIT
 
         static void Main(string[] args)
         {
-            //Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a", "UkrNet");
+            Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a", "UkrNet");
             Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "//a", "UkrOnline");
 
-
+            Console.ReadKey();
         }
 
         public static void Parser(string url, string nodeCount, string nodeSelect, string tableName)
@@ -60,27 +61,30 @@ namespace TEST4_FOR_GIT
             int count = doc.DocumentNode.SelectNodes(nodeCount).Count;
             for (int i = 1; i <= count; i++)
             {
-                //indicator for each parse region
+                //indicator for each parsed region
                 Console.WriteLine($"[{i}]");
 
                 //determines amount of urls in one parse region/SQLite rows
                 var htmlNodes = doc.DocumentNode.SelectNodes($"{nodeCount}[{i}]{nodeSelect}");
                 //int htmlNodeCount = htmlNodes.Count;
 
+                int countHtmlNodes = htmlNodes.Count;
+                //Console.WriteLine(countHtmlNodes);
+                int j = 1;
                 foreach (var node in htmlNodes)
                 {
-                    string nodeValue = node.Attributes["href"].Value;
-                    string result = node.Attributes["href"].XPath;
-                    char res = result.Substring(result.Length - 16).First();
-                    fillInTable(nodeValue, i, tableName, res);
-
+                    
+                    //Console.WriteLine(node.Attributes["href"].Value);
+                    var nodeValue = node.Attributes["href"].Value;
+                    fillInTable(nodeValue, i, tableName, j);
+                    j++;
                 }
             }
-            Console.ReadKey();
+            
             return;
         }
 
-        static void fillInTable(string nodeValue, int i, string tableName, char res)
+        static void fillInTable(string nodeValue, int i, string tableName, int j)
         {
             string path = @"C:\Users\Юрій\Desktop\myTest\test4\test4\bin\Debug\sample.db3";
             bool fileExist = File.Exists(path);
@@ -116,7 +120,7 @@ namespace TEST4_FOR_GIT
                     }
                     else
                     {
-                        cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{nodeValue}') WHERE ID = '{res}'";
+                        cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{nodeValue}') WHERE ID = '{j}'";
                         cmd.ExecuteNonQuery();
 
                     }
