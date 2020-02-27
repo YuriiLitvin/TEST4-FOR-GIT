@@ -35,13 +35,14 @@ namespace TEST4_FOR_GIT
         const string createQuery1 = @"CREATE TABLE IF NOT EXISTS
                                 [UkrOnline] (
                                 [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (2048) NULL)";
+                                [1] NVARCHAR (2048) NOT NULL)";
+
 
 
 
         static void Main(string[] args)
         {
-            Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a", "UkrNet");
+            //Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a", "UkrNet");
             Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "//a", "UkrOnline");
 
             //Console.ReadKey();
@@ -70,7 +71,7 @@ namespace TEST4_FOR_GIT
                     string nodeValue = node.Attributes["href"].Value;
                     list1.Add(nodeValue);
                 }
-                fillInTable(list1, i, tableName);
+                FillInTable(list1, i, tableName);
                 list1.Clear();
 
             }
@@ -78,9 +79,9 @@ namespace TEST4_FOR_GIT
             return;
         }
 
-        static void fillInTable(List<string> list1, int i, string tableName)
+        static void FillInTable(List<string> list1, int i, string tableName)
         {
-            string path = @"C:\Users\Юрій\Desktop\myTest\test4\test4\bin\Debug\sample.db3";
+            string path = @"C:\Users\Юрій\Desktop\for check\TEST4 FOR GIT\TEST4 FOR GIT\bin\Debug\sample.db3";
             bool fileExist = File.Exists(path);
             if (!fileExist)
             {
@@ -115,6 +116,7 @@ namespace TEST4_FOR_GIT
                     {
                         cmd.CommandText = $"ALTER TABLE {tableName} ADD COLUMN '{i}' NVARCHAR(2048) NULL";
                         cmd.ExecuteNonQuery();
+                        
                     }
 
                     // Insert entries in database table
@@ -124,15 +126,14 @@ namespace TEST4_FOR_GIT
                         {
                             cmd.CommandText = $"INSERT INTO {tableName}('{i}') VALUES('{list1[j]}')";
                             cmd.ExecuteNonQuery();
-                            //cmd.CommandText = "SELECT LAST_INSERT_ROWID()";
-
                         }
                     }
                     else
                     {
+                        
                         for (int j = 0; j < list1.Count; j++)
                         {
-                            cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{list1[j]}') WHERE ID = '{j + 1}'";
+                            cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{list1[j]}')"; //WHERE ID = '{j + 1}'";
                             cmd.ExecuteNonQuery();
                         }
                     }
