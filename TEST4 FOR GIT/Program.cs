@@ -35,7 +35,7 @@ namespace TEST4_FOR_GIT
         const string createQuery1 = @"CREATE TABLE IF NOT EXISTS
                                 [UkrOnline] (
                                 [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (2048) NOT NULL)";
+                                [1] NVARCHAR (2048) NULL)"; //NOT
 
 
 
@@ -127,13 +127,22 @@ namespace TEST4_FOR_GIT
                             cmd.CommandText = $"INSERT INTO {tableName}('{i}') VALUES('{list1[j]}')";
                             cmd.ExecuteNonQuery();
                         }
+                        
+
                     }
+                    
+
                     else
                     {
                         
                         for (int j = 0; j < list1.Count; j++)
                         {
-                            cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{list1[j]}')"; //WHERE ID = '{j + 1}'";
+                            cmd.CommandText = "SELECT COUNT(1) FROM UkrOnline";
+                            var rowsCount = Convert.ToInt32(cmd.ExecuteScalar());
+                            int rows = rowsCount - list1.Count;
+                            //Console.WriteLine(rowsCount);
+                            
+                            cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{list1[j]}') WHERE ID = '{rows+j+1}'";
                             cmd.ExecuteNonQuery();
                         }
                     }
