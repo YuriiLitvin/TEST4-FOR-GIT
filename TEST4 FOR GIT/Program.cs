@@ -35,7 +35,7 @@ namespace TEST4_FOR_GIT
         const string createQuery1 = @"CREATE TABLE IF NOT EXISTS
                                 [UkrOnline] (
                                 [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (2048) NULL)"; //NOT
+                                [1] NVARCHAR (2048) NULL)"; 
 
 
 
@@ -116,36 +116,54 @@ namespace TEST4_FOR_GIT
                     {
                         cmd.CommandText = $"ALTER TABLE {tableName} ADD COLUMN '{i}' NVARCHAR(2048) NULL";
                         cmd.ExecuteNonQuery();
-                        
                     }
+                    // insert here reading the table column and compare with "list1"
+                    // than resultList insert to the table
+                    List<string> list = new List<string>();
+                    cmd.CommandText = $"SELECT COUNT(1) FROM {tableName}";
+                    var rowsCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    int rows = rowsCount - list1.Count;
 
-                    // Insert entries in database table
-                    if (i == 1)
-                    {
-                        for (int j = 0; j < list1.Count; j++)
+                    cmd.CommandText = $"Select '{i}' FROM {tableName}";// WHERE ROWNUM>{rows}";
+                    using (var rdr = cmd.ExecuteReader())// try to use SELECT without READER
+                    {                                   //through ExecuteScalar().ToString--> add to list
+                        
+                        while (rdr.Read())
                         {
-                            cmd.CommandText = $"INSERT INTO {tableName}('{i}') VALUES('{list1[j]}')";
-                            cmd.ExecuteNonQuery();
+                            list.Add(Convert.ToString(rdr[$"{i}"]));
                         }
+                    }
+                    var listResult = list.Except(list1).ToList();
+                    Console.WriteLine(listResult);
+                    Console.ReadLine();
+
+                    //////// Insert entries in database table
+                    //////if (i == 1)
+                    //////{
+                    //////    for (int j = 0; j < list1.Count; j++)
+                    //////    {
+                    //////        cmd.CommandText = $"INSERT INTO {tableName}('{i}') VALUES('{list1[j]}')";
+                    //////        cmd.ExecuteNonQuery();
+                    //////    }
                         
 
-                    }
+                    //////}
                     
 
-                    else
-                    {
+                    //////else
+                    //////{
                         
-                        for (int j = 0; j < list1.Count; j++)
-                        {
-                            cmd.CommandText = "SELECT COUNT(1) FROM UkrOnline";
-                            var rowsCount = Convert.ToInt32(cmd.ExecuteScalar());
-                            int rows = rowsCount - list1.Count;
-                            //Console.WriteLine(rowsCount);
+                    //////    for (int j = 0; j < list1.Count; j++)
+                    //////    {
+                    //////        //cmd.CommandText = $"SELECT COUNT(1) FROM {tableName}";
+                    //////        //var rowsCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    //////        //int rows = rowsCount - list1.Count;
                             
-                            cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{list1[j]}') WHERE ID = '{rows+j+1}'";
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
+                            
+                    //////        cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{list1[j]}') WHERE ID = '{rows+j+1}'";
+                    //////        cmd.ExecuteNonQuery();
+                    //////    }
+                    //////}
 
                     // Select and display database entries
                     //cmd.CommandText = $"Select * FROM {tableName}";
