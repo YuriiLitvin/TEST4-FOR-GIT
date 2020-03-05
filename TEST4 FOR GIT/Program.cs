@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;  
+using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using System.Data.SQLite;
@@ -15,35 +15,21 @@ namespace TEST4_FOR_GIT
         const string createQuery = @"CREATE TABLE IF NOT EXISTS
                                 [UkrNet] (
                                 [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (2048) NULL,
-                                [2] NVARCHAR (2048) NULL,
-                                [3] NVARCHAR (2048) NULL,
-                                [4] NVARCHAR (2048) NULL,
-                                [5] NVARCHAR (2048) NULL,
-                                [6] NVARCHAR (2048) NULL,
-                                [7] NVARCHAR (2048) NULL,
-                                [8] NVARCHAR (2048) NULL,
-                                [9] NVARCHAR (2048) NULL,
-                                [10] NVARCHAR (2048) NULL,
-                                [11] NVARCHAR (2048) NULL,
-                                [12] NVARCHAR (2048) NULL,
-                                [13] NVARCHAR (2048) NULL,
-                                [14] NVARCHAR (2048) NULL,
-                                [15] NVARCHAR (2048) NULL,
-                                [16] NVARCHAR (2048) NULL)";
+                                [1] NVARCHAR (2048) NULL
+                                )";
 
         const string createQuery1 = @"CREATE TABLE IF NOT EXISTS
                                 [UkrOnline] (
                                 [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (2048) NULL)"; 
+                                [1] NVARCHAR (2048) NULL)";
 
 
 
 
         static void Main(string[] args)
         {
-            //Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a", "UkrNet");
-            Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "//a", "UkrOnline");
+            Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a", "UkrNet");
+            //Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "//a", "UkrOnline");
 
             //Console.ReadKey();
         }
@@ -56,15 +42,16 @@ namespace TEST4_FOR_GIT
             List<string> list1 = new List<string>();
 
             // determines amount of parse regions/SQLite columns
-            int count = doc.DocumentNode.SelectNodes(nodeCount).Count;
-            for (int i = 1; i <= count; i++)
+
+            //int count = doc.DocumentNode.SelectNodes(nodeCount).Count;!!!!!!
+            for (int i = 1; i <= 1; i++) //count!!!!!!
             {
                 //indicator for each parsed region
                 Console.WriteLine($"[{i}]");
 
                 //determines amount of urls in one parse region/SQLite rows
                 var htmlNodes = doc.DocumentNode.SelectNodes($"{nodeCount}[{i}]{nodeSelect}");
-                
+
                 //int j = 1;
                 foreach (var node in htmlNodes)
                 {
@@ -73,14 +60,12 @@ namespace TEST4_FOR_GIT
                 }
                 FillInTable(list1, i, tableName);
                 list1.Clear();
-
             }
-            
-            return;
         }
 
         static void FillInTable(List<string> list1, int i, string tableName)
         {
+            List<string> list = new List<string>();
             string path = @"C:\Users\Юрій\Desktop\for check\TEST4 FOR GIT\TEST4 FOR GIT\bin\Debug\sample.db3";
             bool fileExist = File.Exists(path);
             if (!fileExist)
@@ -119,70 +104,65 @@ namespace TEST4_FOR_GIT
                     }
                     // insert here reading the table column and compare with "list1"
                     // than resultList insert to the table
-                    List<string> list = new List<string>();
+
+
+                    // Insert entries in database table
                     cmd.CommandText = $"SELECT COUNT(1) FROM {tableName}";
                     var rowsCount = Convert.ToInt32(cmd.ExecuteScalar());
                     int rows = rowsCount - list1.Count;
 
-                    cmd.CommandText = $"Select '{i}' FROM {tableName}";// WHERE ROWNUM>{rows}";
-                    using (var rdr = cmd.ExecuteReader())// try to use SELECT without READER
-                    {                                   //through ExecuteScalar().ToString--> add to list
-                        
-                        while (rdr.Read())
+
+                    if (i == 1)
+                    {
+                        for (int j = 0; j < list1.Count; j++)
                         {
-                            list.Add(Convert.ToString(rdr[$"{i}"]));
+                            cmd.CommandText = $"INSERT INTO {tableName}('{i}') VALUES('{list1[j]}')";
+                            cmd.ExecuteNonQuery();
                         }
                     }
-                    var listResult = list.Except(list1).ToList();
-                    Console.WriteLine(listResult);
-                    Console.ReadLine();
-
-                    //////// Insert entries in database table
-                    //////if (i == 1)
-                    //////{
-                    //////    for (int j = 0; j < list1.Count; j++)
-                    //////    {
-                    //////        cmd.CommandText = $"INSERT INTO {tableName}('{i}') VALUES('{list1[j]}')";
-                    //////        cmd.ExecuteNonQuery();
-                    //////    }
-                        
-
-                    //////}
-                    
-
-                    //////else
-                    //////{
-                        
-                    //////    for (int j = 0; j < list1.Count; j++)
-                    //////    {
-                    //////        //cmd.CommandText = $"SELECT COUNT(1) FROM {tableName}";
-                    //////        //var rowsCount = Convert.ToInt32(cmd.ExecuteScalar());
-                    //////        //int rows = rowsCount - list1.Count;
-                            
-                            
-                    //////        cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{list1[j]}') WHERE ID = '{rows+j+1}'";
-                    //////        cmd.ExecuteNonQuery();
-                    //////    }
-                    //////}
+                    else
+                    {
+                        for (int j = 0; j < list1.Count; j++)
+                        {
+                            cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{list1[j]}') WHERE ID = '{rows + j + 1}'";
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
 
                     // Select and display database entries
-                    //cmd.CommandText = $"Select * FROM {tableName}";
-                    //using (var rdr = cmd.ExecuteReader())
-                    //{
-                    //    while (rdr.Read())
-                    //    {
-                    //        Console.WriteLine(rdr[$"{i}"]);
-                    //    }
-                    //}
+
+                    cmd.CommandText = $"Select * FROM {tableName}";
+
+
+                    using (var rdr = cmd.ExecuteReader())
+                    {
+
+                        while (rdr.Read())
+                        {
+                            string readerLine = rdr.GetString(i);
+                            list.Add(readerLine);
+                        }
+                        //Console.WriteLine(list.Count);
+                        //Console.ReadLine();
+                    }
                     // Close the connection to the database
                     conn.Close();
-
                 }
-
             }
 
-            return;
+            var listResult = list1.Except(list).ToList();
+            if (listResult != null)
+            {
+                Console.WriteLine("Here we have new lines!!!");
+                Console.WriteLine(listResult.Count);
+                Console.ReadLine();
+            }
+            else
 
+            {
+                Console.WriteLine("There are no new lines");
+                Console.ReadLine();
+            }
         }
 
 
