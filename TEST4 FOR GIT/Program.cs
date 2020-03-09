@@ -9,12 +9,15 @@ using System.IO;
 using System.Data;
 using System.Timers;
 using Telegram.Bot;
+using Telegram.Bot.Args;
+using System.Threading;
 
 namespace TEST4_FOR_GIT
 {
     class Program
     {
-        private static readonly TelegramBotClient Bot = new TelegramBotClient("1028340877:AAGZMZOwKrdZD5-yrONAlgv4Tmlytk6ShiA");
+        static ITelegramBotClient botClient;
+
 
         const string createQuery = @"CREATE TABLE IF NOT EXISTS
                                 [UkrNet] (
@@ -30,24 +33,27 @@ namespace TEST4_FOR_GIT
 
 
         static void Main(string[] args)
+
         {
-            Timer aTimer = new Timer();
+            botClient = new TelegramBotClient("1028340877:AAGZMZOwKrdZD5-yrONAlgv4Tmlytk6ShiA");
+
+            System.Timers.Timer aTimer = new System.Timers.Timer();
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             aTimer.Interval = 30000;
             aTimer.Enabled = true;
             Console.WriteLine("Press \'q\' to quit the sample.");
             while (Console.Read() != 'q') ;
-            //TelegramBot();
-
-
-
         }
 
-
-
-        private static void OnTimedEvent(object source, ElapsedEventArgs e)
+            private static void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             CallParser();
+            // post to telegram
+            var news_data = "post this news data to channel";
+            TelegramBot(news_data);
+            // for async: if ther is no any other methods need to set some time to sleep
+            // in our case we exiting timed event, so async method runs correctly
+            //Thread.Sleep(int.MaxValue);
 
         }
         static void CallParser()
@@ -197,13 +203,10 @@ namespace TEST4_FOR_GIT
                 }
             }
         }
-        static async void TelegramBot()
+        static async void TelegramBot(string news_data)
         {
-
-            ////var me = botClient.GetMeAsync().Result;
-            //// Console.WriteLine("Hello, World! I am user  and my name is Yurii))).");
-            //await botClient.SendTextMessageAsync("@FreshNewsUkraine", text: "Hello, World!!!)))");
-
+            Console.WriteLine("Hello, World! I am user  and my name is Yurii))).");
+            await botClient.SendTextMessageAsync("@botbroadcasting", text: news_data);
         }
 
 
