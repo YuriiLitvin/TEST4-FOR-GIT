@@ -7,55 +7,66 @@ using HtmlAgilityPack;
 using System.Data.SQLite;
 using System.IO;
 using System.Data;
+using System.Timers;
+using Telegram.Bot;
 
 namespace TEST4_FOR_GIT
 {
     class Program
     {
+        private static readonly TelegramBotClient Bot = new TelegramBotClient("1028340877:AAGZMZOwKrdZD5-yrONAlgv4Tmlytk6ShiA");
+
         const string createQuery = @"CREATE TABLE IF NOT EXISTS
                                 [UkrNet] (
                                 [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (2048) NULL,
-                                [2] NVARCHAR (2048) NULL,
-                                [3] NVARCHAR (2048) NULL,
-                                [4] NVARCHAR (2048) NULL,
-                                [5] NVARCHAR (2048) NULL,
-                                [6] NVARCHAR (2048) NULL,
-                                [7] NVARCHAR (2048) NULL,
-                                [8] NVARCHAR (2048) NULL,
-                                [9] NVARCHAR (2048) NULL,
-                                [10] NVARCHAR (2048) NULL,
-                                [11] NVARCHAR (2048) NULL,
-                                [12] NVARCHAR (2048) NULL,
-                                [13] NVARCHAR (2048) NULL,
-                                [14] NVARCHAR (2048) NULL,
-                                [15] NVARCHAR (2048) NULL,
-                                [16] NVARCHAR (2048) NULL)";
+                                [1] NVARCHAR (2048) NULL)";
 
         const string createQuery1 = @"CREATE TABLE IF NOT EXISTS
                                 [UkrOnline] (
                                 [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (2048) NULL)"; //NOT
+                                [1] NVARCHAR (2048) NULL)";
 
 
 
 
         static void Main(string[] args)
         {
-            //Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a", "UkrNet");
-            Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "//a", "UkrOnline");
+            Timer aTimer = new Timer();
+            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.Interval = 30000;
+            aTimer.Enabled = true;
+            Console.WriteLine("Press \'q\' to quit the sample.");
+            while (Console.Read() != 'q') ;
+            //TelegramBot();
 
-            //Console.ReadKey();
+
+
         }
+
+
+
+        private static void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            CallParser();
+
+        }
+        static void CallParser()
+        {
+            Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a", "UkrNet");
+            //Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "//a", "UkrOnline");
+        }
+
+
 
         public static void Parser(string url, string nodeCount, string nodeSelect, string tableName)
         {
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(url);
             //
-            List<string> list1 = new List<string>();
+            List<string> listSite = new List<string>();
 
             // determines amount of parse regions/SQLite columns
+
             int count = doc.DocumentNode.SelectNodes(nodeCount).Count;
             for (int i = 1; i <= count; i++)
             {
@@ -64,24 +75,22 @@ namespace TEST4_FOR_GIT
 
                 //determines amount of urls in one parse region/SQLite rows
                 var htmlNodes = doc.DocumentNode.SelectNodes($"{nodeCount}[{i}]{nodeSelect}");
-                
+
                 //int j = 1;
                 foreach (var node in htmlNodes)
                 {
                     string nodeValue = node.Attributes["href"].Value;
-                    list1.Add(nodeValue);
+                    listSite.Add(nodeValue);
                 }
-                FillInTable(list1, i, tableName);
-                list1.Clear();
-
+                FillInTable(listSite, i, tableName);
+                listSite.Clear();
             }
-            
-            return;
         }
 
-        static void FillInTable(List<string> list1, int i, string tableName)
+        static void FillInTable(List<string> listSite, int i, string tableName)
         {
-            string path = @"C:\Users\Юрій\Desktop\for check\TEST4 FOR GIT\TEST4 FOR GIT\bin\Debug\sample.db3";
+            List<string> listDB = new List<string>();
+            string path = @"C:\Users\Юрій\Desktop\myTest\test4\test4\bin\Debug\sample.db3";
             bool fileExist = File.Exists(path);
             if (!fileExist)
             {
@@ -116,54 +125,84 @@ namespace TEST4_FOR_GIT
                     {
                         cmd.CommandText = $"ALTER TABLE {tableName} ADD COLUMN '{i}' NVARCHAR(2048) NULL";
                         cmd.ExecuteNonQuery();
-                        
                     }
-
-                    // Insert entries in database table
-                    if (i == 1)
-                    {
-                        for (int j = 0; j < list1.Count; j++)
-                        {
-                            cmd.CommandText = $"INSERT INTO {tableName}('{i}') VALUES('{list1[j]}')";
-                            cmd.ExecuteNonQuery();
-                        }
-                        
-
-                    }
-                    
-
                     else
                     {
-                        
-                        for (int j = 0; j < list1.Count; j++)
+                        // insert here reading the table column and compare with "list1"
+                        // than resultList insert to the table
+                        cmd.CommandText = $"Select * FROM {tableName}";
+                        using (var rdr = cmd.ExecuteReader())
                         {
-                            cmd.CommandText = "SELECT COUNT(1) FROM UkrOnline";
-                            var rowsCount = Convert.ToInt32(cmd.ExecuteScalar());
-                            int rows = rowsCount - list1.Count;
-                            //Console.WriteLine(rowsCount);
-                            
-                            cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{list1[j]}') WHERE ID = '{rows+j+1}'";
+                            while (rdr.Read())
+                            {
+                                if (rdr[$"{i}"] != DBNull.Value)
+                                //if (rdr.GetString(i).GetType() != typeof(DBNull))
+                                {
+                                    string readerLine = (rdr[$"{i}"]).ToString();
+                                    //string readerLine = rdr.GetString(i);
+                                    listDB.Add(readerLine);
+                                }
+                                //else
+                                //{
+                                //    string readerLine = rdr.GetString(i);
+                                //    listDB.Add(readerLine);
+                                //}
+
+
+                            }
+                            //Console.WriteLine(list.Count);
+                            //Console.ReadLine();
+                        }
+                    }
+                    var listResult = listSite.Except(listDB).ToList();
+                    //if (listResult.Count != 0)
+                    //{
+                    //    Console.WriteLine("Here we have new lines!!!");
+                    //    Console.WriteLine(listResult.Count);
+                    //    Console.ReadLine();
+                    //}
+                    //else
+                    //{
+                    //    Console.WriteLine("There are no new lines");
+                    //    Console.ReadLine();
+                    //}
+
+
+
+                    // Insert entries in database table
+                    cmd.CommandText = $"SELECT COUNT(1) FROM {tableName}";
+                    var rowsCount = Convert.ToInt32(cmd.ExecuteScalar());
+                    int rows = rowsCount - listResult.Count;
+
+
+                    if (i == 1)
+                    {
+                        for (int j = 0; j < listResult.Count; j++)
+                        {
+                            cmd.CommandText = $"INSERT INTO {tableName}('{i}') VALUES('{listResult[j]}')";
                             cmd.ExecuteNonQuery();
                         }
                     }
-
-                    // Select and display database entries
-                    //cmd.CommandText = $"Select * FROM {tableName}";
-                    //using (var rdr = cmd.ExecuteReader())
-                    //{
-                    //    while (rdr.Read())
-                    //    {
-                    //        Console.WriteLine(rdr[$"{i}"]);
-                    //    }
-                    //}
+                    else
+                    {
+                        for (int j = 0; j < listResult.Count; j++)
+                        {
+                            cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{listResult[j]}') WHERE ID = '{rows + j + 1}'";
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    listResult.Clear();
                     // Close the connection to the database
                     conn.Close();
-
                 }
-
             }
+        }
+        static async void TelegramBot()
+        {
 
-            return;
+            ////var me = botClient.GetMeAsync().Result;
+            //// Console.WriteLine("Hello, World! I am user  and my name is Yurii))).");
+            //await botClient.SendTextMessageAsync("@FreshNewsUkraine", text: "Hello, World!!!)))");
 
         }
 
