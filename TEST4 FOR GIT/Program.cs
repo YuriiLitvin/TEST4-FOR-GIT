@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;  
+using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using System.Data.SQLite;
@@ -90,7 +90,7 @@ namespace TEST4_FOR_GIT
         static void FillInTable(List<string> listSite, int i, string tableName)
         {
             List<string> listDB = new List<string>();
-            string path = @"C:\Users\Юрій\Desktop\myTest\test4\test4\bin\Debug\sample.db3";
+            string path = @"C:\Users\Юрій\Desktop\for check\TEST4 FOR GIT\TEST4 FOR GIT\bin\Debug\sample.db3";
             bool fileExist = File.Exists(path);
             if (!fileExist)
             {
@@ -205,6 +205,8 @@ namespace TEST4_FOR_GIT
             //await botClient.SendTextMessageAsync("@FreshNewsUkraine", text: "Hello, World!!!)))");
 
         }
+
+
 
 
 
