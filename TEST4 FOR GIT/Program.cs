@@ -15,8 +15,7 @@ namespace TEST4_FOR_GIT
         const string createQuery = @"CREATE TABLE IF NOT EXISTS
                                 [UkrNet] (
                                 [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (2048) NULL
-                                )";
+                                [1] NVARCHAR (2048) NULL)";
 
         const string createQuery1 = @"CREATE TABLE IF NOT EXISTS
                                 [UkrOnline] (
@@ -104,6 +103,32 @@ namespace TEST4_FOR_GIT
                     }
                     // insert here reading the table column and compare with "list1"
                     // than resultList insert to the table
+                    using (var rdr = cmd.ExecuteReader())
+                    {
+
+                        while (rdr.Read())
+                        {
+                            string readerLine = rdr.GetString(i);
+                            list.Add(readerLine);
+                        }
+                        //Console.WriteLine(list.Count);
+                        //Console.ReadLine();
+                    }
+
+                    var listResult = list1.Except(list).ToList();
+                    if (listResult.Count != 0)
+                    {
+                        Console.WriteLine("Here we have new lines!!!");
+                        Console.WriteLine(listResult.Count);
+                        Console.ReadLine();
+                    }
+                    else
+
+                    {
+                        Console.WriteLine("There are no new lines");
+                        Console.ReadLine();
+                    }
+
 
 
                     // Insert entries in database table
@@ -134,35 +159,13 @@ namespace TEST4_FOR_GIT
                     cmd.CommandText = $"Select * FROM {tableName}";
 
 
-                    using (var rdr = cmd.ExecuteReader())
-                    {
-
-                        while (rdr.Read())
-                        {
-                            string readerLine = rdr.GetString(i);
-                            list.Add(readerLine);
-                        }
-                        //Console.WriteLine(list.Count);
-                        //Console.ReadLine();
-                    }
+                    
                     // Close the connection to the database
                     conn.Close();
                 }
             }
 
-            var listResult = list1.Except(list).ToList();
-            if (listResult != null)
-            {
-                Console.WriteLine("Here we have new lines!!!");
-                Console.WriteLine(listResult.Count);
-                Console.ReadLine();
-            }
-            else
-
-            {
-                Console.WriteLine("There are no new lines");
-                Console.ReadLine();
-            }
+            
         }
 
 
