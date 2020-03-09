@@ -9,8 +9,7 @@ using System.IO;
 using System.Data;
 using System.Timers;
 using Telegram.Bot;
-using Telegram.Bot.Args;
-using System.Threading;
+
 
 namespace TEST4_FOR_GIT
 {
@@ -142,38 +141,16 @@ namespace TEST4_FOR_GIT
                             while (rdr.Read())
                             {
                                 if (rdr[$"{i}"] != DBNull.Value)
-                                //if (rdr.GetString(i).GetType() != typeof(DBNull))
                                 {
                                     string readerLine = (rdr[$"{i}"]).ToString();
-                                    //string readerLine = rdr.GetString(i);
                                     listDB.Add(readerLine);
                                 }
-                                //else
-                                //{
-                                //    string readerLine = rdr.GetString(i);
-                                //    listDB.Add(readerLine);
-                                //}
-
-
+                               
                             }
-                            //Console.WriteLine(list.Count);
-                            //Console.ReadLine();
+                            
                         }
                     }
                     var listResult = listSite.Except(listDB).ToList();
-                    //if (listResult.Count != 0)
-                    //{
-                    //    Console.WriteLine("Here we have new lines!!!");
-                    //    Console.WriteLine(listResult.Count);
-                    //    Console.ReadLine();
-                    //}
-                    //else
-                    //{
-                    //    Console.WriteLine("There are no new lines");
-                    //    Console.ReadLine();
-                    //}
-
-
 
                     // Insert entries in database table
                     cmd.CommandText = $"SELECT COUNT(1) FROM {tableName}";
