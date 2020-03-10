@@ -36,7 +36,7 @@ namespace TEST4_FOR_GIT
         {
             botClient = new TelegramBotClient("1028340877:AAGZMZOwKrdZD5-yrONAlgv4Tmlytk6ShiA");
 
-            System.Timers.Timer aTimer = new System.Timers.Timer();
+            Timer aTimer = new Timer();
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             aTimer.Interval = 30000;
             aTimer.Enabled = true;
@@ -101,7 +101,7 @@ namespace TEST4_FOR_GIT
             {
                 SQLiteConnection.CreateFile("sample.db3");
             }
-            // connect to database
+            // connect to database. try/catch
             using (var conn = new SQLiteConnection("data source = sample.db3"))
             {
                 //create a database command 
