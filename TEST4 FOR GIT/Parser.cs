@@ -7,45 +7,49 @@ namespace TEST4_FOR_GIT
     class Parser
     {
 
-        public string Url { get; set; } 
-        public string NodeCollection { get; set; }
-        public string NodeSelect { get; set; }
+        public string Url { get; set; }
+        public string ChapterSelector { get; set; }
+        public string ArticleSelector { get; set; }
 
-        // Constructor
-        public Parser(string url, string nodeCollection, string nodeSelect)
+
+        public Parser(string newsUrl, string chapterSelector, string articleSelector)
         {
-            Url = url;
-            NodeCollection = nodeCollection;
-            NodeSelect = nodeSelect;
+            Url = newsUrl;
+            ChapterSelector = chapterSelector;
+            ArticleSelector = articleSelector;
         }
 
-        public List<string> SiteParsing() 
+        public List<string> GetNewsUrls()
         {
-            HtmlWeb web = new HtmlWeb();
-            HtmlDocument doc = web.Load(Url);
-            
-            List<string> listSite = new List<string>();
+            var listSite = new List<string>();
 
-            // determines amount of chapters to parse
-            int nodesQuantity = doc.DocumentNode.SelectNodes(NodeCollection).Count;
-            for (int i = 1; i <= nodesQuantity; i++)
+            foreach (var chapterNode in GetChapterNodes())
             {
-                //determines amount of atricles in one chapter
-                HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes(
-                    $"{NodeCollection}[{i}]{NodeSelect}");
-                
-
-                foreach (HtmlNode article in htmlNodes)
+                foreach (var articleNode in GetArticleNodes(chapterNode))
                 {
-                    string articleValue = article.Attributes["href"].Value;
-                    listSite.Add(articleValue);
+                    listSite.Add(GetArticleUrl(articleNode));
                 }
-                //FillInTable(listSite, i, tableName);
-                //listSite.Clear(); -- to clear listSite after comparison with listDB
-            }
 
+            }
             return listSite;
         }
-
+        private HtmlNodeCollection GetChapterNodes()
+        {
+            var web = new HtmlWeb();
+            var doc = web.Load(Url);
+            return doc.DocumentNode.SelectNodes(ChapterSelector);
+        }
+       
+        private HtmlNodeCollection GetArticleNodes(HtmlNode chapterNode)
+        {
+            return chapterNode.SelectNodes(ArticleSelector);
+        }
+        
+        private string GetArticleUrl(HtmlNode articleNode) 
+        {
+            string value = articleNode.Attributes["href"].Value;
+            return value;
+        }
+    
     }
 }
