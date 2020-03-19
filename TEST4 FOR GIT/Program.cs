@@ -34,31 +34,37 @@ namespace TEST4_FOR_GIT
         static void Main(string[] args)
 
         {
-            botClient = new TelegramBotClient("1028340877:AAGZMZOwKrdZD5-yrONAlgv4Tmlytk6ShiA");
+            //botClient = new TelegramBotClient("1028340877:AAGZMZOwKrdZD5-yrONAlgv4Tmlytk6ShiA");
 
-            Timer aTimer = new Timer();
-            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Interval = 30000;
-            aTimer.Enabled = true;
-            Console.WriteLine("Press \'q\' to quit the sample.");
-            while (Console.Read() != 'q') ;
-        }
-
-            private static void OnTimedEvent(object source, ElapsedEventArgs e)
-        {
+            //Timer aTimer = new Timer();
+            //aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            //aTimer.Interval = 30000;
+            //aTimer.Enabled = true;
+            //Console.WriteLine("Press \'q\' to quit the sample.");
+            //while (Console.Read() != 'q') ;
             CallParser();
-            // post to telegram
-            var news_data = "post this news data to channel";
-            TelegramBot(news_data);
-            // for async: if ther is no any other methods need to set some time to sleep
-            // in our case we exiting timed event, so async method runs correctly
-            //Thread.Sleep(int.MaxValue);
-
         }
+
+        //private static void OnTimedEvent(object source, ElapsedEventArgs e)
+        //{
+        //    CallParser();
+        //    // post to telegram
+        //    var news_data = "post this news data to channel";
+        //    TelegramBot(news_data);
+        //    // for async: if ther is no any other methods need to set some time to sleep
+        //    // in our case we exiting timed event, so async method runs correctly
+        //    //Thread.Sleep(int.MaxValue);
+
+        //}
         static void CallParser()
         {
-            //Parser p = new Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a");
-            //p.SiteParsing();
+            Parser UkrNetParser = new Parser("http://www.ukr.net", "//article//section", "*[position()<last()]//a");
+            UkrNetParser.GetNewsUrls();
+            foreach (var item in UkrNetParser.GetNewsUrls())
+            {
+                Console.WriteLine(item);
+            }
+            Console.ReadLine();
             //Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a", "UkrNet");
             //Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "//a", "UkrOnline");
         }
