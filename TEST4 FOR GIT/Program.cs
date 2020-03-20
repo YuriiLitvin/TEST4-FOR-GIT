@@ -59,14 +59,10 @@ namespace TEST4_FOR_GIT
         static void CallParser()
         {
             Parser UkrNetParser = new Parser("http://www.ukr.net", "//article//section", "*[position()<last()]//a");
-            UkrNetParser.GetNewsUrls();
-            foreach (var item in UkrNetParser.GetNewsUrls())
-            {
-                Console.WriteLine(item);
-            }
-            Console.ReadLine();
-            //Parser("http://www.ukr.net", "//article//section", "/*[position()<last()]//a", "UkrNet");
-            //Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "//a", "UkrOnline");
+            //Parser UkrOnline = new Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "a");
+            UkrNetParser.GetNews();
+            
+            
         }
 
 

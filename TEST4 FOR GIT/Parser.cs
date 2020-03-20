@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Web;
 using System.Collections.Generic;
 using HtmlAgilityPack;
 
@@ -19,19 +19,27 @@ namespace TEST4_FOR_GIT
             ArticleSelector = articleSelector;
         }
 
-        public List<string> GetNewsUrls()
+        public Dictionary<string, List<Article>> GetNews()
         {
-            var listSite = new List<string>();
+            var DictionarySite = new Dictionary<string, List<Article>>();
+            var ArticlesList = new List<Article>();
+
 
             foreach (var chapterNode in GetChapterNodes())
             {
+
+                var chapterNodeHeader = HttpUtility.HtmlDecode(chapterNode.SelectSingleNode(".//h2").InnerText);
+
+
                 foreach (var articleNode in GetArticleNodes(chapterNode))
                 {
-                    listSite.Add(GetArticleUrl(articleNode));
+                    ArticlesList.Add(GetArticle(articleNode));
                 }
 
+                DictionarySite.Add(chapterNodeHeader, ArticlesList);
             }
-            return listSite;
+
+            return DictionarySite;
         }
         private HtmlNodeCollection GetChapterNodes()
         {
@@ -39,17 +47,21 @@ namespace TEST4_FOR_GIT
             var doc = web.Load(Url);
             return doc.DocumentNode.SelectNodes(ChapterSelector);
         }
-       
+
         private HtmlNodeCollection GetArticleNodes(HtmlNode chapterNode)
         {
             return chapterNode.SelectNodes(ArticleSelector);
         }
-        
-        private string GetArticleUrl(HtmlNode articleNode) 
+
+        private Article GetArticle(HtmlNode articleNode)
         {
-            string value = articleNode.Attributes["href"].Value;
-            return value;
+            Article article = new Article();
+
+            article.ArticleText = articleNode.InnerText;
+            article.ArticleUrl = articleNode.Attributes["href"].Value;
+            article.GetArticleTextWithUrl();
+
+            return article;
         }
-    
     }
 }
