@@ -22,12 +22,12 @@ namespace TEST4_FOR_GIT
         public Dictionary<string, List<Article>> GetNews()
         {
             var DictionarySite = new Dictionary<string, List<Article>>();
-            var ArticlesList = new List<Article>();
+            
 
 
             foreach (var chapterNode in GetChapterNodes())
             {
-
+                var ArticlesList = new List<Article>();
                 var chapterNodeHeader = HttpUtility.HtmlDecode(chapterNode.SelectSingleNode(".//h2").InnerText);
 
 
@@ -55,13 +55,14 @@ namespace TEST4_FOR_GIT
 
         private Article GetArticle(HtmlNode articleNode)
         {
-            Article article = new Article();
+            Article articles = new Article();
 
-            article.ArticleText = articleNode.InnerText;
-            article.ArticleUrl = articleNode.Attributes["href"].Value;
-            article.GetArticleTextWithUrl();
+            
+            articles.ArticleText = HttpUtility.HtmlDecode(articleNode.SelectSingleNode("a").InnerText);
+            articles.ArticleUrl = articleNode.Attributes["href"].Value;
+            articles.GetArticleTextWithUrl();
 
-            return article;
+            return articles;
         }
     }
 }
