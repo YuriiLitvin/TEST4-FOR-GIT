@@ -28,6 +28,7 @@ namespace TEST4_FOR_GIT
             foreach (var chapterNode in GetChapterNodes())
             {
                 var ArticlesList = new List<Article>();
+                // TODO: change to set encoding while setting up HtmlWeb object
                 var chapterNodeHeader = HttpUtility.HtmlDecode(chapterNode.SelectSingleNode(".//h2").InnerText);
 
 
@@ -55,9 +56,10 @@ namespace TEST4_FOR_GIT
 
         private Article GetArticle(HtmlNode articleNode)
         {
+            // TODO: not many articles, still one article
             Article articles = new Article();
 
-            
+            // TODO: change to set encoding while setting up HtmlWeb object
             articles.ArticleText = HttpUtility.HtmlDecode(articleNode.SelectSingleNode("a").InnerText);
             articles.ArticleUrl = articleNode.Attributes["href"].Value;
             articles.GetArticleTextWithUrl();

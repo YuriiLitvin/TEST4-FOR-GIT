@@ -42,6 +42,12 @@ namespace TEST4_FOR_GIT
             //aTimer.Enabled = true;
             //Console.WriteLine("Press \'q\' to quit the sample.");
             //while (Console.Read() != 'q') ;
+            // TODO: ensure you fixed all other todos before starting this
+            // TODO: here you can create List<Dictionary<string, List<Arcticle>>> to use it like a database (for not bothering yourself with real db yet)
+            // TODO: then you can "call the parser" 2 times in a row, to have 2 items in a list.
+            // TODO: then you can start to compare them and store the diff in the same type dictionary, but with only different values
+            // TODO: then you can run it with timer and compare last item in list with previous, using the diff you set up above
+            // TODO: then you can prettify your code - rename some variables and extract couple of methods :)
             CallParser();
         }
 
@@ -50,12 +56,16 @@ namespace TEST4_FOR_GIT
         //    CallParser();
         //    // post to telegram
         //    var news_data = "post this news data to channel";
+        //    // TODO: use .Wait() or .Result applying to async function to wait for it to be executed.
         //    TelegramBot(news_data);
         //    // for async: if ther is no any other methods need to set some time to sleep
         //    // in our case we exiting timed event, so async method runs correctly
         //    //Thread.Sleep(int.MaxValue);
 
         //}
+
+        // TODO: return news dictionary instead of void to use it in future
+        // TODO: then rename "Call parser" to something easily understandable
         static void CallParser()
         {
             Parser UkrNetParser = new Parser("http://www.ukr.net", "//article//section", "*[position()<last()]//a");
@@ -64,9 +74,10 @@ namespace TEST4_FOR_GIT
             foreach (var chapter in UkrNetParser.GetNews())
             {
                 Console.WriteLine(chapter.Key);
-                
+
                 //foreach (List<Article> article in chapter)
                 //{
+                //    // TODO: use already created item.GetArticleTextWithUrl() or create something similar
                 //    Console.WriteLine(item);
                 //}
             }
