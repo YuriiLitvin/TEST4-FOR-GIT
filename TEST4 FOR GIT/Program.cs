@@ -71,15 +71,14 @@ namespace TEST4_FOR_GIT
             Parser UkrNetParser = new Parser("http://www.ukr.net", "//article//section", "*[position()<last()]//a");
             //Parser UkrOnline = new Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "a");
             
-            foreach (var chapter in UkrNetParser.GetNews())
+            foreach (KeyValuePair<string, List<Article>> chapterArticlesPair in UkrNetParser.GetNews())
             {
-                Console.WriteLine(chapter.Key);
+                Console.WriteLine(chapterArticlesPair.Key);
 
-                //foreach (List<Article> article in chapter)
-                //{
-                //    // TODO: use already created item.GetArticleTextWithUrl() or create something similar
-                //    Console.WriteLine(item);
-                //}
+                foreach (Article article in chapterArticlesPair.Value)
+                {
+                    Console.WriteLine(article.GetArticleTextWithUrl());
+                }
             }
             Console.ReadLine();
 
