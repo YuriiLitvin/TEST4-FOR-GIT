@@ -45,7 +45,8 @@ namespace TEST4_FOR_GIT
         private HtmlNodeCollection GetChapterNodes()
         {
             var web = new HtmlWeb();
-            var doc = web.Load(Url);
+            //web = web.OverrideEncoding;
+            var doc = web.Load(Url,Encoding.UTF8);
             return doc.DocumentNode.SelectNodes(ChapterSelector);
         }
 
@@ -56,15 +57,16 @@ namespace TEST4_FOR_GIT
 
         private Article GetArticle(HtmlNode articleNode)
         {
-            // TODO: not many articles, still one article
-            Article articles = new Article();
+            // DONE: not many articles, still one article
+            Article article = new Article();
 
             // TODO: change to set encoding while setting up HtmlWeb object
-            articles.ArticleText = HttpUtility.HtmlDecode(articleNode.SelectSingleNode("a").InnerText);
-            articles.ArticleUrl = articleNode.Attributes["href"].Value;
-            articles.GetArticleTextWithUrl();
+            article.ArticleText = articleNode.InnerText;
+            //article.ArticleText = HttpUtility.HtmlDecode(articleNode.SelectSingleNode("a").InnerText);
+            article.ArticleUrl = articleNode.Attributes["href"].Value;
+            article.GetArticleTextWithUrl();
 
-            return articles;
+            return article;
         }
     }
 }

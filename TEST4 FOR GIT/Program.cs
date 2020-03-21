@@ -68,22 +68,22 @@ namespace TEST4_FOR_GIT
         // TODO: then rename "Call parser" to something easily understandable
         static void CallParser()
         {
-            Parser UkrNetParser = new Parser("http://www.ukr.net", "//article//section", "*[position()<last()]//a");
+            Parser UkrNetParser = new Parser("http://www.ukr.net", "//article//section", "*[position()>1 and position()<last()]//a");
             //Parser UkrOnline = new Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "a");
             
             foreach (var chapter in UkrNetParser.GetNews())
             {
                 Console.WriteLine(chapter.Key);
 
-                //foreach (List<Article> article in chapter)
-                //{
-                //    // TODO: use already created item.GetArticleTextWithUrl() or create something similar
-                //    Console.WriteLine(item);
-                //}
+                foreach (var article in chapter.Value)
+                {
+                    // DONE: use already created item.GetArticleTextWithUrl() or create something similar
+                    Console.WriteLine(article);
+                }
             }
             Console.ReadLine();
 
-
+            
         }
 
 
