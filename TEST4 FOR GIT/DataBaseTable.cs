@@ -69,6 +69,9 @@ namespace TEST4_FOR_GIT
                     // TODO: remove null check, dont store null
                     if (rdr["1"] != DBNull.Value)
                     {
+                        // TODO: use deserialization here to get the dictionary from string which were stored in DB
+                        // e.g. JSON one via Newtonsoft.JSON library
+                        // tutorial: https://www.newtonsoft.com/json/help/html/DeserializeDictionary.htm
                         DictionaryDB = (rdr["1"]);
                     }
                 }
