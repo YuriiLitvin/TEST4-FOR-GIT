@@ -23,15 +23,15 @@ namespace TEST4_FOR_GIT
 
 
         
-        // rename: If the class is already "...Table", don`t duplicate it with ...Table(), just Create() will be enought
-        public void CreateDBTable()
+        // DONE rename: If the class is already "...Table", don`t duplicate it with ...Table(), just Create() will be enought
+        public void Create()
         {   
-            // TODO: make nvarchar(max) not null
-            // TODO: rename column to at least "Data"
+            // DONE: make nvarchar(max) not null
+            // DONE: rename column to at least "Data"
             string createQuery = $@"CREATE TABLE IF NOT EXISTS
                                 [{TableName}] (
                                 [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (MAX) NULL)";
+                                [Data] NVARCHAR (MAX) NOT NULL)";
             
 
 
@@ -104,11 +104,13 @@ namespace TEST4_FOR_GIT
         }
 
         //NOTE: here I will replace "void" with Dictionary<string,List<Artilce>>
-        // TODO: Save shouldnt retun anything, Dictionary<string,List<Artilce>> it a parameter -- the difference to save
-        // TODO: rename method (remove "difference"), database table shouldn't be specific to the application logic
+        // TODO: Save shouldnt retun anything, Dictionary<string,List<Artilce>> it a parameter -- the difference
+        //to save
+        // DONE: rename method (remove "difference"), database table shouldn't be specific to the application 
+        //logic
         
         // for database and for table its just some info for some columns
-        public void SaveNewsdifference()
+        public void SaveNews()
         {
             // TODO: use Serialization here to store the dictionary in DB
             // e.g. JSON one via Newtonsoft.JSON library
