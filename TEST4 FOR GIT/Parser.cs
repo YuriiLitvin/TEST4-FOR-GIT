@@ -19,20 +19,20 @@ namespace TEST4_FOR_GIT
             ArticleSelector = articleSelector;
         }
 
-        public Dictionary<string, List<Article>> GetNews()
+        public Dictionary<string,List<Article>> GetNews()
         {
-            var DictionarySite = new Dictionary<string, List<Article>>();
+            Dictionary<string,List<Article>> DictionarySite = new Dictionary<string,List<Article>>();
             
 
 
-            foreach (var chapterNode in GetChapterNodes())
+            foreach (HtmlNode chapterNode in GetChapterNodes())
             {
-                var ArticlesList = new List<Article>();
+                List<Article> ArticlesList = new List<Article>();
                 // TODO: change to set encoding while setting up HtmlWeb object
-                var chapterNodeHeader = HttpUtility.HtmlDecode(chapterNode.SelectSingleNode(".//h2").InnerText);
+                string chapterNodeHeader = HttpUtility.HtmlDecode(chapterNode.SelectSingleNode(".//h2").InnerText);
 
 
-                foreach (var articleNode in GetArticleNodes(chapterNode))
+                foreach (HtmlNode articleNode in GetArticleNodes(chapterNode))
                 {
                     ArticlesList.Add(GetArticle(articleNode));
                 }
@@ -44,9 +44,8 @@ namespace TEST4_FOR_GIT
         }
         private HtmlNodeCollection GetChapterNodes()
         {
-            var web = new HtmlWeb();
-            //web = web.OverrideEncoding;
-            var doc = web.Load(Url,Encoding.UTF8);
+            HtmlWeb web = new HtmlWeb();
+            HtmlDocument doc = web.Load(Url);
             return doc.DocumentNode.SelectNodes(ChapterSelector);
         }
 

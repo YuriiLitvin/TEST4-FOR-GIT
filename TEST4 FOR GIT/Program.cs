@@ -18,18 +18,11 @@ namespace TEST4_FOR_GIT
         static ITelegramBotClient botClient;
 
 
-        const string createQuery = @"CREATE TABLE IF NOT EXISTS
-                                [UkrNet] (
-                                [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (2048) NULL)";
-
-        const string createQuery1 = @"CREATE TABLE IF NOT EXISTS
-                                [UkrOnline] (
-                                [ID] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                [1] NVARCHAR (2048) NULL)";
-
-
-
+        
+        static Program()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+        }
 
         static void Main(string[] args)
 
@@ -42,12 +35,16 @@ namespace TEST4_FOR_GIT
             //aTimer.Enabled = true;
             //Console.WriteLine("Press \'q\' to quit the sample.");
             //while (Console.Read() != 'q') ;
-            // TODO: ensure you fixed all other todos before starting this
-            // TODO: here you can create List<Dictionary<string, List<Arcticle>>> to use it like a database (for not bothering yourself with real db yet)
+            // DONE: ensure you fixed all other todos before starting this
+            // TODO: here you can create List<Dictionary<string, List<Arcticle>>> to use it like a database
+            //(for not bothering yourself with real db yet)
             // TODO: then you can "call the parser" 2 times in a row, to have 2 items in a list.
-            // TODO: then you can start to compare them and store the diff in the same type dictionary, but with only different values
-            // TODO: then you can run it with timer and compare last item in list with previous, using the diff you set up above
-            // TODO: then you can prettify your code - rename some variables and extract couple of methods :)
+            // TODO: then you can start to compare them and store the diff in the same type dictionary,
+            //but with only different values
+            // TODO: then you can run it with timer and compare last item in list with previous, 
+            //using the diff you set up above
+            // TODO: then you can prettify your code - rename some variables and 
+            //extract couple of methods :)
             CallParser();
         }
 
@@ -70,8 +67,10 @@ namespace TEST4_FOR_GIT
         {
             Parser UkrNetParser = new Parser("http://www.ukr.net", "//article//section", "*[position()<last()]//a");
             //Parser UkrOnline = new Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "a");
-            
-            foreach (KeyValuePair<string, List<Article>> chapterArticlesPair in UkrNetParser.GetNews())
+
+            Dictionary<string,List<Article>> news = UkrNetParser.GetNews();
+
+            foreach (KeyValuePair<string, List<Article>> chapterArticlesPair in news)
             {
                 Console.WriteLine(chapterArticlesPair.Key);
 
@@ -85,37 +84,6 @@ namespace TEST4_FOR_GIT
 
         }
 
-
-
-        public static void Parser(string url, string nodeCount, string nodeSelect, string tableName)
-        {
-            HtmlWeb web = new HtmlWeb();
-            HtmlDocument doc = web.Load(url);
-            //
-            List<string> listSite = new List<string>();
-
-            // determines amount of parse regions/SQLite columns
-
-            int count = doc.DocumentNode.SelectNodes(nodeCount).Count;
-            for (int i = 1; i <= count; i++)
-            {
-                //indicator for each parsed region
-                Console.WriteLine($"[{i}]");
-
-                //determines amount of urls in one parse region/SQLite rows
-                var htmlNodes = doc.DocumentNode.SelectNodes($"{nodeCount}[{i}]{nodeSelect}");
-
-                //int j = 1;
-                foreach (var node in htmlNodes)
-                {
-                    string nodeValue = node.Attributes["href"].Value;
-                    listSite.Add(nodeValue);
-                }
-                FillInTable(listSite, i, tableName);
-                listSite.Clear();
-            }
-        }
-
         static void FillInTable(List<string> listSite, int i, string tableName)
         {
             List<string> listDB = new List<string>();
@@ -126,84 +94,8 @@ namespace TEST4_FOR_GIT
             {
                 SQLiteConnection.CreateFile("sample.db3");
             }
-            // connect to database. try/catch
-            using (var conn = new SQLiteConnection("data source = sample.db3"))
-            {
-                //create a database command 
-                using (var cmd = new SQLiteCommand(conn))
-                {
-                    conn.Open();
-
-                    //swith between tables
-                    if (tableName == "UkrNet")
-                    {
-                        cmd.CommandText = createQuery;
-                    }
-                    else
-                    {
-                        cmd.CommandText = createQuery1;
-                    }
-                    cmd.ExecuteNonQuery();
-
-                    // Get the schema for the columns in the database.
-                    DataTable ColsTable = conn.GetSchema("Columns");
-
-                    // Query the columns schema using SQL statements to work out if the required columns exist.
-                    bool ColumnExists = ColsTable.Select($"COLUMN_NAME='{i}' AND TABLE_NAME='{tableName}'").Length != 0;
-
-                    if (!ColumnExists)
-                    {
-                        cmd.CommandText = $"ALTER TABLE {tableName} ADD COLUMN '{i}' NVARCHAR(2048) NULL";
-                        cmd.ExecuteNonQuery();
-                    }
-                    else
-                    {
-                        // reading the table column and compare with listSite
-                        // than resultList insert to the table
-                        cmd.CommandText = $"Select * FROM {tableName}";
-                        using (var rdr = cmd.ExecuteReader())
-                        {
-                            while (rdr.Read())
-                            {
-                                if (rdr[$"{i}"] != DBNull.Value)
-                                {
-                                    string readerLine = (rdr[$"{i}"]).ToString();
-                                    listDB.Add(readerLine);
-                                }
-                               
-                            }
-                            
-                        }
-                    }
-                    var listResult = listSite.Except(listDB).ToList();
-
-                    // Insert entries in database table
-                    cmd.CommandText = $"SELECT COUNT(1) FROM {tableName}";
-                    var rowsCount = Convert.ToInt32(cmd.ExecuteScalar());
-                    int rows = rowsCount - listResult.Count;
-
-
-                    if (i == 1)
-                    {
-                        for (int j = 0; j < listResult.Count; j++)
-                        {
-                            cmd.CommandText = $"INSERT INTO {tableName}('{i}') VALUES('{listResult[j]}')";
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-                    else
-                    {
-                        for (int j = 0; j < listResult.Count; j++)
-                        {
-                            cmd.CommandText = $"UPDATE {tableName} SET ('{i}') = ('{listResult[j]}') WHERE ID = '{rows + j + 1}'";
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-                    listResult.Clear();
-                    // Close the connection to the database
-                    conn.Close();
-                }
-            }
+            // connect to database
+            
         }
         static async void TelegramBot(string news_data)
         {
