@@ -35,7 +35,7 @@ namespace TEST4_FOR_GIT
             //aTimer.Enabled = true;
             //Console.WriteLine("Press \'q\' to quit the sample.");
             //while (Console.Read() != 'q') ;
-            // DONE: ensure you fixed all other todos before starting this
+            // TODO (not done): ensure you fixed all other todos before starting this
             // TODO: here you can create List<Dictionary<string, List<Arcticle>>> to use it like a database
             //(for not bothering yourself with real db yet)
             // TODO: then you can "call the parser" 2 times in a row, to have 2 items in a list.
@@ -68,8 +68,9 @@ namespace TEST4_FOR_GIT
             Parser UkrNetParser = new Parser("http://www.ukr.net", "//article//section", "*[position()<last()]//a");
             //Parser UkrOnline = new Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "a");
 
+            DataBase db = new DataBase();
+            db.CreateDataBaseFile();
             Dictionary<string,List<Article>> news = UkrNetParser.GetNews();
-
             foreach (KeyValuePair<string, List<Article>> chapterArticlesPair in news)
             {
                 Console.WriteLine(chapterArticlesPair.Key);
