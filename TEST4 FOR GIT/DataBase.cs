@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace TEST4_FOR_GIT
 {
     class DataBase
     {
-        // TODO: rename to reference logic -- CreateDatabaseIfNotExists
-        public void CreateDataBaseFile()
+        public void CreateDatabaseIfNotExists()
         {
-            // TODO: rename from "sample"
-            // TODO: use just "sample.db3", program is in Debug folder already
-            string path = @"C:\Users\Юрій\Desktop\for check
-                            \TEST4 FOR GIT\TEST4 FOR GIT\bin\Debug\sample.db3";
+            string path = @"sample.db3";
             bool fileExist = File.Exists(path);
             if (!fileExist)
             {
@@ -23,6 +15,16 @@ namespace TEST4_FOR_GIT
             }
         }
 
-// TODO: fix bracket :)
-}
+        public SQLiteConnection CreateConnection() 
+        {
+            // TODO: use connection that will be already set up and passed as a constructor parameter
+            
+            var result = new SQLiteConnection("data source = sample.db3");
+            result.Open();
+            return result;
+        }
+    }
+    
+    
+    
 }

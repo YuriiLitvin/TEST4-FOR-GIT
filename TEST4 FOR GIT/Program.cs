@@ -69,8 +69,17 @@ namespace TEST4_FOR_GIT
             //Parser UkrOnline = new Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "a");
 
             DataBase db = new DataBase();
-            db.CreateDataBaseFile();
+            db.CreateDatabaseIfNotExists();
+            var connection = db.CreateConnection();
+            var table = new DataBaseTable("X",connection);
+            table.Create();
+            
+            
+            
+            
+            
             Dictionary<string,List<Article>> news = UkrNetParser.GetNews();
+            
             foreach (KeyValuePair<string, List<Article>> chapterArticlesPair in news)
             {
                 Console.WriteLine(chapterArticlesPair.Key);

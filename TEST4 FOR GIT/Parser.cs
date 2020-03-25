@@ -6,7 +6,6 @@ namespace TEST4_FOR_GIT
 {
     class Parser
     {
-
         public string Url { get; set; }
         public string ChapterSelector { get; set; }
         public string ArticleSelector { get; set; }
@@ -56,12 +55,10 @@ namespace TEST4_FOR_GIT
 
         private Article GetArticle(HtmlNode articleNode)
         {
-            // DONE: not many articles, still one article
             Article article = new Article();
 
             // TODO: change to set encoding while setting up HtmlWeb object
             article.ArticleText = articleNode.InnerText;
-            //article.ArticleText = HttpUtility.HtmlDecode(articleNode.SelectSingleNode("a").InnerText);
             article.ArticleUrl = articleNode.Attributes["href"].Value;
             article.GetArticleTextWithUrl();
 
