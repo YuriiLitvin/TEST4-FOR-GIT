@@ -23,38 +23,38 @@ namespace TEST4_FOR_GIT
         
         }
 
-        public Dictionary<string,List<Article>> GetPreviousNews() 
-        {
-            var DictionaryDB = new Dictionary<string, List<Article>>();
+        //public Dictionary<string,List<Article>> GetPreviousNews() 
+        //{
+        //    var DictionaryDB = new Dictionary<string, List<Article>>();
 
-            var cmd = new SQLiteCommand(connection);
-            cmd.CommandText = $"Select * FROM {TableName}";
-            using (var rdr = cmd.ExecuteReader())
-            {
-                while (rdr.Read())
-                {
+            //var cmd = new SQLiteCommand(connection);
+            //cmd.CommandText = $"Select * FROM {TableName}";
+            //using (var rdr = cmd.ExecuteReader())
+        //    {
+        //        while (rdr.Read())
+        //        {
                     
-                        // TODO: use deserialization here to get the dictionary from string 
-                        //which were stored in DB
-                        // e.g. JSON one via Newtonsoft.JSON library
-                        // tutorial: https://www.newtonsoft.com/json/help/html/DeserializeDictionary.htm
+        //                // TODO: use deserialization here to get the dictionary from string 
+        //                //which were stored in DB
+        //                // e.g. JSON one via Newtonsoft.JSON library
+        //                // tutorial: https://www.newtonsoft.com/json/help/html/DeserializeDictionary.htm
                     
-                }
-            }
-            return DictionaryDB;
-        }
+        //        }
+        //    }
+        //    return DictionaryDB;
+        //}
 
         
 
-        public void SaveNews()
-        {
-            // TODO: use Serialization here to store the dictionary in DB
-            // e.g. JSON one via Newtonsoft.JSON library
-            // tutorial: https://www.newtonsoft.com/json/help/html/SerializeDictionary.htm
+        //public void SaveNews()
+        //{
+        //    // TODO: use Serialization here to store the dictionary in DB
+        //    // e.g. JSON one via Newtonsoft.JSON library
+        //    // tutorial: https://www.newtonsoft.com/json/help/html/SerializeDictionary.htm
             
-            cmd.CommandText = $"INSERT INTO {TableName}('1') VALUES('{listResult[j]}')";
-            cmd.ExecuteNonQuery();
-        }
+        //    cmd.CommandText = $"INSERT INTO {TableName}('1') VALUES('{listResult[j]}')";
+        //    cmd.ExecuteNonQuery();
+        //}
     
     
     

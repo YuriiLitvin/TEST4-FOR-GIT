@@ -27,9 +27,9 @@ namespace TEST4_FOR_GIT
 
                 foreach (Article article in chapterArticlesPair.Value)
                 {
-                    var listResult = article.Except().ToList();    
+                 //   var listResult = article.Except().ToList();    
                 }
-                difference.Add(chapterArticlesPair, listResult);
+                //difference.Add(chapterArticlesPair, listResult);
             }
 
 
