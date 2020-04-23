@@ -13,7 +13,7 @@ namespace TEST4_FOR_GIT
 
         public string GetArticleTextWithUrl()
         {
-            return string.Format("{0} {1}", ArticleText, ArticleUrl);
+            return string.Format("{0}\n{1}", ArticleText, ArticleUrl);
         }
     }
 }

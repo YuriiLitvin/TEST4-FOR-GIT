@@ -74,9 +74,11 @@
   <ItemGroup>
     <Compile Include="Article.cs" />
     <Compile Include="DataBase.cs" />
-    <Compile Include="DataBaseTable.cs" />
+    <Compile Include="IParser.cs" />
+    <Compile Include="JSONConverter.cs" />
     <Compile Include="NewsComparator.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="ParserKeys.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

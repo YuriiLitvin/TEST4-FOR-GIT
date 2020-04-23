@@ -4,39 +4,39 @@ using HtmlAgilityPack;
 
 namespace TEST4_FOR_GIT
 {
-    class Parser
+    class Parser : IParser
     {
         public string Url { get; set; }
+        public string ChapterHeadNode { get; set; }
         public string ChapterSelector { get; set; }
         public string ArticleSelector { get; set; }
 
+        //Parser(string newsUrl, string chapterHeadNode, string chapterSelector, string articleSelector)
 
-        public Parser(string newsUrl, string chapterSelector, string articleSelector)
+        public Parser(string [] array)
         {
-            Url = newsUrl;
-            ChapterSelector = chapterSelector;
-            ArticleSelector = articleSelector;
+            Url = array[0];
+            ChapterSelector = array[1];
+            ArticleSelector = array[2];
+            ChapterHeadNode = array[3];
         }
 
         public Dictionary<string,List<Article>> GetNews()
         {
             Dictionary<string,List<Article>> DictionarySite = new Dictionary<string,List<Article>>();
             
-
-
             foreach (HtmlNode chapterNode in GetChapterNodes())
             {
-                List<Article> ArticlesList = new List<Article>();
-                // TODO: change to set encoding while setting up HtmlWeb object
-                string chapterNodeHeader = HttpUtility.HtmlDecode(chapterNode.SelectSingleNode(".//h2").InnerText);
+                List<Article> ArticleList = new List<Article>();
 
-
+                string chapterHeader = chapterNode.SelectSingleNode(ChapterHeadNode).InnerText;
+                
                 foreach (HtmlNode articleNode in GetArticleNodes(chapterNode))
                 {
-                    ArticlesList.Add(GetArticle(articleNode));
+                    ArticleList.Add(GetArticle(articleNode));
                 }
 
-                DictionarySite.Add(chapterNodeHeader, ArticlesList);
+                DictionarySite.Add(chapterHeader, ArticleList);
             }
 
             return DictionarySite;
@@ -55,11 +55,11 @@ namespace TEST4_FOR_GIT
 
         private Article GetArticle(HtmlNode articleNode)
         {
-            Article article = new Article();
-
-            // TODO: change to set encoding while setting up HtmlWeb object
-            article.ArticleText = articleNode.InnerText;
-            article.ArticleUrl = articleNode.Attributes["href"].Value;
+            Article article = new Article
+            {
+                ArticleText = articleNode.InnerText,
+                ArticleUrl = articleNode.Attributes["href"].Value
+            };
             article.GetArticleTextWithUrl();
 
             return article;

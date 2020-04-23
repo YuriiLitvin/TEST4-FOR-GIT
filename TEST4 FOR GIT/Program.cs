@@ -9,72 +9,43 @@ using System.IO;
 using System.Data;
 using System.Timers;
 using Telegram.Bot;
-
+using Newtonsoft.Json;
 
 namespace TEST4_FOR_GIT
 {
     class Program
     {
-        //static ITelegramBotClient botClient;
-
-
-        
-        //static Program()
-        //{
-        //    Console.OutputEncoding = Encoding.UTF8;
-        //}
-
         static void Main(string[] args)
         {
-
-            #region Timer
-            //botClient = new TelegramBotClient("1028340877:AAGZMZOwKrdZD5-yrONAlgv4Tmlytk6ShiA");
-
-            //Timer aTimer = new Timer();
-            //aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            //aTimer.Interval = 30000;
-            //aTimer.Enabled = true;
-            //Console.WriteLine("Press \'q\' to quit the sample.");
-            //while (Console.Read() != 'q');
-            // TODO (not done): ensure you fixed all other todos before starting this
-            // TODO: here you can create List<Dictionary<string, List<Arcticle>>> to use it like a database
-            //(for not bothering yourself with real db yet)
-            // TODO: then you can "call the parser" 2 times in a row, to have 2 items in a list.
-            // TODO: then you can start to compare them and store the diff in the same type dictionary,
-            //but with only different values
-            // TODO: then you can run it with timer and compare last item in list with previous, 
-            //using the diff you set up above
-            // TODO: then you can prettify your code - rename some variables and 
-            //extract couple of methods :)
-            #endregion
 
             CallParser();
         }
         
-        
-        #region OnTimedEvent
-        //private static void OnTimedEvent(object source, ElapsedEventArgs e)
-        //{
-        //    CallParser();
-        //    // post to telegram
-        //    var news_data = "post this news data to channel";
-        //    // TODO: use .Wait() or .Result applying to async function to wait for it to be executed.
-        //    TelegramBot(news_data);
-        //    // for async: if ther is no any other methods need to set some time to sleep
-        //    // in our case we exiting timed event, so async method runs correctly
-        //    //Thread.Sleep(int.MaxValue);
-        //}
-        #endregion
-
-
         // TODO: return news dictionary instead of void to use it in future
         // TODO: then rename "Call parser" to something easily understandable
         static void CallParser()
         {
-            Parser UkrNetParser = new Parser("http://www.ukr.net", "//article//section", "*[position()>1 and position()<last()]//a");
+            #region SetForParsers
+            //Parser UkrNetParser = new Parser("http://www.ukr.net",
+            //"//article//section",
+            //".//h2",
+            //".//*[position()>1 and position()<last()]//a");
 
-            //Parser UkrOnline = new Parser("http://www.ukr-online.com", "//td[1]/div[1]/div[@class ='lastblock']", "a");
 
+            //Parser UkrOnline = new Parser("http://www.ukr-online.com",
+            //    "//td[1]/div[1]/div[@class ='lastblock']",
+            //    ".//*[@class = 'lastheader']",
+            //    ".//div[@class = 'custom-4']//a");
+            #endregion
+
+            ParserKeys keys = new ParserKeys();
+            foreach (var key in keys.GetList()) 
+            {
+                var news = new Parser(key);
+            }
+            
+            
+            
             //DataBase db = new DataBase();
             //db.CreateDatabaseIfNotExists();
             //var connection = db.CreateConnection();
@@ -83,40 +54,32 @@ namespace TEST4_FOR_GIT
 
 
 
-
-            using (var sw = new StreamWriter("test.txt", true, Encoding.UTF8)) 
+            using (var fs = new FileStream("test.txt", FileMode.Append))
             {
-                Dictionary<string, List<Article>> news = UkrNetParser.GetNews();
-
-                foreach (KeyValuePair<string, List<Article>> chapterArticlesPair in news)
+                using (var sw = new StreamWriter(fs))
                 {
-                    sw.WriteLine(chapterArticlesPair.Key);
+                    Dictionary<string, List<Article>> news = UkrOnline.GetNews();
 
-                    foreach (Article article in chapterArticlesPair.Value)
+                    foreach (KeyValuePair<string, List<Article>> chapterArticlesPair in news)
                     {
-                        sw.WriteLine(article.GetArticleTextWithUrl());
+                        sw.WriteLine(chapterArticlesPair.Key);
+
+                        foreach (Article article in chapterArticlesPair.Value)
+                        {
+                            sw.WriteLine(article.GetArticleTextWithUrl());
+                        }
                     }
                 }
             }
+
+            //string json = JsonConvert.SerializeObject(news, Formatting.Indented);
+            //Console.WriteLine(json);
             Console.WriteLine("finished");
             Console.ReadLine();
 
 
         }
 
-        //static void FillInTable(List<string> listSite, int i, string tableName)
-        //{
-        //    List<string> listDB = new List<string>();
-        //    string path = @"C:\Users\Юрій\Desktop\for check
-        //                    \TEST4 FOR GIT\TEST4 FOR GIT\bin\Debug\sample.db3";
-        //    bool fileExist = File.Exists(path);
-        //    if (!fileExist)
-        //    {
-        //        SQLiteConnection.CreateFile("sample.db3");
-        //    }
-        //    // connect to database
-            
-        //}
         //static async void TelegramBot(string news_data)
         //{
         //    Console.WriteLine("Hello, World! I am user  and my name is Yurii))).");
